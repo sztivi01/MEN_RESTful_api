@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: MEN REST API
+  description: MongoDB ExpressJS NodeJS REST API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000/api/
+    description: Localhost development server
+components:
+  securitySchemes:
+    ApiKeyAuth: # arbitrary name for the security scheme
+      type: apiKey
+      in: header # can be "header", "query" or "cookie"
+      name: auth-token
+
+  schemas:
+    Keyboard:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        inStock:
+          type: boolean
+
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        date:
+          type: string
+
+paths:
+  /user/register:
+    post:
+      summary: Register a new User
+      description: Register a new User in the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+
+      responses:
+        201:
+          description: User created succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  _id:
+                    type: string
+
+  /user/login:
+    post:
+      summary: Login a User
+      description: Login a User in order to get JWT token (auth-token)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+
+      responses:
+        200:
+          description: User logged in succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  data:
+                    type: string
+
+  /keyboards:
+    get:
+      summary: Retrieves a list of Keyboards
+      description: Retrieves a list of Keyboards as JSON objects.
+      responses:
+        200:
+          description: A list of Keyboard JSON objects in an array.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/keyboards"
+
+    post:
+      summary: Create a new Keyboard
+      description: Create a new Keyboard
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Keyboard"
+
+      responses:
+        201:
+          description: Keyboard created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Keyboard"
+
+  /keyboards/{id}:
+    get:
+      summary: Specific Keyboard
+      description: Retrieves a specific Keyboard based on it id.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      responses:
+        200:
+          description: A Keyboard in the format of a JSON object.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Keyboard"
+
+    put:
+      summary: Updates a specific Keyboard
+      description: Updates a specific Keyboard based on it id
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Keyboard"
+
+      responses:
+        201:
+          description: Keyboard updated succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Keyboard"
+
+    delete:
+      summary: Deletes a specific Keyboard
+      description: Deletes a specific Keyboard based on it id
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: MongoDB id
+          schema:
+            type: string
+
+      responses:
+        201:
+          description: Keyboard deleted succesfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Keyboard"
