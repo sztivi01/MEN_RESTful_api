@@ -1,11 +1,11 @@
 const router = require("express").Router();
 const keyboards = require("../models/keyboards.js");
-
+const {verifyToken} = require("../validation")
 
 // Crud operations
 // /api/keyboards/
 // Create keyboard entry  - post
-router.post("/", (req, res) => {
+router.post("/",verifyToken, (req, res) => {
   data = req.body;
 
   keyboards
@@ -25,8 +25,9 @@ router.get("/", (req, res) => {
   keyboards
     .find()
     .then((data) => {
-      res.send(data);
+      res.send(mapArray(data));
     })
+
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
@@ -34,9 +35,29 @@ router.get("/", (req, res) => {
 
 //Read instock keyboards  - get
 
-router.get("/instock", (req, res) => {
+router.get("/instock/:status", (req, res) => {
   keyboards
-    .find({ inStock: true })
+    .find({ inStock: req.params.status })
+    .then((data) => {
+      res.send(mapArray(data));
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+});
+
+//Price route
+router.get("/price/:operator/:price", (req, res) => {
+  const operator = req.params.operator;
+  const price = req.params.price;
+
+  let filterExpr = {};
+  if (operator == "gt") filterExpr = { $gte: req.params.price };
+  else if (operator == "lt") filterExpr = { $lte: req.params.price };
+  else filterExpr = $lte.req.params.price;
+
+  keyboards
+    .find({ price: filterExpr })
     .then((data) => {
       res.send(data);
     })
@@ -109,5 +130,18 @@ router.delete("/:id", (req, res) => {
         .send({ message: "Error deleting keyboard with id=" + id });
     });
 });
+
+function mapArray(arr) {
+  let outputArr = arr.map((element) => ({
+    id: element._id,
+    name: element.name,
+    description: element.description,
+    price: element.price,
+    inStock: element.inStock,
+    uri: `/api/keyboards/${element._id}`,
+  }));
+
+  return outputArr;
+}
 
 module.exports = router;

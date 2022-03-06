@@ -40,7 +40,7 @@ app.get("/api/welcome", (req, res) => {
 
 //post,put,delete ->CRUD
 
-app.use("/api/keyboards", verifyToken, keyboardsRoutes);
+app.use("/api/keyboards", keyboardsRoutes);
 app.use("/api/user", authRoutes);
 
 const PORT = process.env.PORT || 4000;
