@@ -5,7 +5,8 @@ const {verifyToken} = require("../validation")
 // Crud operations
 // /api/keyboards/
 // Create keyboard entry  - post
-router.post("/",verifyToken, (req, res) => {
+//router.post("/",verifyToken, (req, res) => {
+  router.post("/", (req, res) => {
   data = req.body;
 
   keyboards
