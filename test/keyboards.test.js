@@ -6,13 +6,9 @@ const server = require('../server');
 
 chai.use(chaiHttp);
 
-
-
-
 describe('/First test collection',() => {
 
     it('test default API welcome route...',(done) =>{ 
-
 
         chai.request(server)
         .get('/api/welcome')
@@ -54,16 +50,12 @@ describe('/First test collection',() => {
         });
     });
 
-
-
     it('should test two values....',() =>{ 
         //actual test content is here 
         let expectedVal=10;
         let actualVal=10;
 
-
         expect(actualVal).to.be.equal(expectedVal);
-
 
     })
 })

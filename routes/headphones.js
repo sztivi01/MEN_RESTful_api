@@ -1,18 +1,18 @@
 const router = require("express").Router();
-const keyboards = require("../models/keyboards.js");
+const headphones = require("../models/headphones.js");
 const {verifyToken} = require("../validation");
 const NodeCache = require("node-cache");
 //stdTTL is the time to live in seconds
 const cache = new NodeCache ({stdTTL:600});
 
 // Crud operations
-// /api/keyboards/
-// Create keyboard entry  - post
+// /api/headphones/
+// Create headphone entry  - post
 //router.post("/",verifyToken, (req, res) => {
   router.post("/", (req, res) => {
   data = req.body;
 
-  keyboards
+  headphones
     .insertMany(data)
     .then((data) => {
       cache.flushAll();
@@ -23,27 +23,27 @@ const cache = new NodeCache ({stdTTL:600});
     });
 });
 
-// /api/keyboards/
-//Read all keyboard  - get
+// /api/headphones/
+//Read all headphones  - get
 
 router.get("/",async (req, res) => {
 
   try{
     //try to get data from the cache
-    let keyboardsCache = cache.get("allKeyboards");
+    let headphonesCache = cache.get("allHeadphones");
     //if data is not in the cache, get it from the database
-    if(!keyboardsCache){
-      let data = await keyboards.find();
+    if(!headphonesCache){
+      let data = await headphones.find();
 
       console.log("No cache data found. Fetching from DB..")
       const timeToLiveSecs=30;
-      cache.set('allKeyboards',data);
+      cache.set('allHeadphones',data);
 
       res.send(mapArray(data));
     } 
     else{
       console.log("Cache data found. Returning from cache..")
-      res.send( mapArray(keyboardsCache));
+      res.send( mapArray(headphonesCache));
     }
   }
   catch(err){
@@ -51,7 +51,7 @@ router.get("/",async (req, res) => {
   }
 
   }
-/*   keyboards
+/*   headphones
     .find()
     .then((data) => {
       res.send(mapArray(data));
@@ -62,10 +62,10 @@ router.get("/",async (req, res) => {
     }); */
 );
 
-//Read instock keyboards  - get
+//Read instock headphones  - get
 
 router.get("/instock/:status", (req, res) => {
-  keyboards
+    headphones
     .find({ inStock: req.params.status })
     .then((data) => {
       res.send(mapArray(data));
@@ -85,7 +85,7 @@ router.get("/price/:operator/:price", (req, res) => {
   else if (operator == "lt") filterExpr = { $lte: req.params.price };
   else filterExpr = $lte.req.params.price;
 
-  keyboards
+  headphones
     .find({ price: filterExpr })
     .then((data) => {
       res.send(data);
@@ -95,10 +95,10 @@ router.get("/price/:operator/:price", (req, res) => {
     });
 });
 
-//Read specific keyboard  - get
+//Read specific headphones  - get
 
 router.get("/:id", (req, res) => {
-  keyboards
+    headphones
     .findById(req.params.id)
     .then((data) => {
       res.send(data);
@@ -108,12 +108,12 @@ router.get("/:id", (req, res) => {
     });
 });
 
-//Update specific keyboard - put
+//Update specific headphone - put
 
 router.put("/:id", (req, res) => {
   const id = req.params.id;
 
-  keyboards
+  headphones
     .findByIdAndUpdate(id, req.body)
     .then((data) => {
       if (!data) {
@@ -124,39 +124,39 @@ router.put("/:id", (req, res) => {
             ".Maybe keyboard was not found!",
         });
       } else {
-        res.send({ message: "Keyboard was succesfully updated." });
+        res.send({ message: "headphone was succesfully updated." });
       }
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error updating keyboard with id=" + id });
+        .send({ message: "Error updating headphone with id=" + id });
     });
 });
 
-//Delete specific keyboard - delete
+//Delete specific headphone - delete
 
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
-  keyboards
+  headphones
     .findByIdAndDelete(id)
     .then((data) => {
       if (!data) {
         res.status(404).send({
           message:
-            "Cannot delete keyboard with id" +
+            "Cannot delete headphone with id" +
             id +
-            ".Maybe keyboard was not found!",
+            ".Maybe headphone was not found!",
         });
       } else {
-        res.send({ message: "Keyboard was succesfully deleted." });
+        res.send({ message: "headphone was succesfully deleted." });
       }
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error deleting keyboard with id=" + id });
+        .send({ message: "Error deleting headphone with id=" + id });
     });
 });
 
@@ -167,7 +167,7 @@ function mapArray(arr) {
     description: element.description,
     price: element.price,
     inStock: element.inStock,
-    uri: `/api/keyboards/${element._id}`,
+    uri: `/api/headphones/${element._id}`,
   }));
 
   return outputArr;

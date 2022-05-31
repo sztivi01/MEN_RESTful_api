@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const keyboards = require("./models/keyboards");
 const app = express();
 const { verifyToken } = require("./validation");
+const mousepads = require("./models/mousepads");
+const headphones = require("./models/headphones");
 
 //swagger stuff
 const swaggerUI = require("swagger-ui-express");
@@ -15,6 +17,8 @@ app.use("/api/docs", swaggerUI.serve, swaggerUI.setup(swaggerDefinition));
 
 //import routes
 const keyboardsRoutes = require("./routes/keyboards");
+const mousepadsRoutes = require("./routes/mousepads");
+const headphonesRoutes = require("./routes/headphones");
 const authRoutes = require("./routes/auth");
 
 require("dotenv-flow").config();
@@ -41,6 +45,8 @@ app.get("/api/welcome", (req, res) => {
 //post,put,delete ->CRUD
 
 app.use("/api/keyboards", keyboardsRoutes);
+app.use("/api/mousepads", mousepadsRoutes);
+app.use("/api/heaphones", headphonesRoutes);
 app.use("/api/user", authRoutes);
 
 const PORT = process.env.PORT || 4000;
